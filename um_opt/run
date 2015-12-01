@@ -1,0 +1,13 @@
+#!/bin/sh
+
+for i in advent.umz
+do   
+  /usr/bin/time -f "um $i: %U seconds (user time)" \
+ ./um $i < advent_input.txt  > /dev/null
+done
+ 
+for i in midmark.um sandmark.umz
+do   
+  /usr/bin/time -f "um $i: %U seconds (user time)" ./um $i > /dev/null
+done
+

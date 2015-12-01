@@ -1,0 +1,16 @@
+Stage 0: intial state
+midmark.um : 6.274s
+	   : 85.07 x 10 ^ 6 instructions per instruction
+
+sandmark.umz : 156.111s
+
+advent.umz : 52.091s
+
+Stage 1: compile with - 01
+midmark.um : 4.95s
+	   : 85.07 x 10 ^ 6 instructions per instruction
+
+sandmark.umz : 123.13s
+
+advent.umz : 45.35s
+

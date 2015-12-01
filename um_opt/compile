@@ -1,0 +1,60 @@
+#!/bin/sh
+clear
+
+set -e # halt on first error
+
+link=all # link all binaries by defualy
+linked=no # track if linked
+
+case $1 in
+  -nolink) link=none ; shift ;; # don't link
+  -link) link="$2" ; shift; shift ;; # link only the binary given
+esac 
+
+# compile and link against CII40
+CIIFLAGS=`pkg-config --cflags cii40`
+CIILIBS=`pkg-config --libs cii40`
+
+# compile and link against course software and netpbm library
+CFLAGS="-I. -I/comp/40/include $CIIFLAGS"
+LIBS="$CIILIBS -l40locality -lnetpbm -lm -lrt -larith40 -lbitpack"
+LFLAGS="-L/comp/40/lib64"
+
+# max out warnings
+FLAGS="-g -O2 -Wall -Wextra -std=c99 -pedantic"
+
+rm -f *.o # remove object files
+
+case $# in 
+  0) set *.c ;; # compile all .c files by default
+esac 
+
+
+for cfile
+do 
+  gcc $FLAGS $CFLAGS -c $cfile 
+done
+
+# now link binaries
+
+case $link in
+  all|um) gcc $FLAGS $LFLAGS -o um um_main.o\
+                        segments.o um_abs.o -lcii40-O2\
+                        $LIBS $CIILIBS
+                        linked=yes ;;
+esac
+
+case $link in
+  all|segments_test) gcc $FLAGS $LFLAGS -o segments_test segments_test.o\
+                        segments.o -lcii40-O2\
+                        $LIBS $CIILIBS
+                        linked=yes ;;
+esac
+
+if [ $linked = no ]; then
+  case $link in 
+    none) ;;
+    *) echo "`basename $0`: don't know how to link $link" 1>&2 ; exit 1 ;;
+  esac
+fi
+                        
