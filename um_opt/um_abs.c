@@ -22,10 +22,10 @@ struct UM_T {
         uint32_t prog_counter;
 };
 
-typedef struct wordData {
+typedef struct {
         uint32_t rega, regb, regc, opcode;
         int val;
-} *wordData;
+} wordData;
 
 enum Registers{ r0 = 0, r1, r2, r3, r4, r5, r6, r7 };
 enum Opcodes{ CMOV = 0, SEGLD, SEGS, ADD, MULT, DIV, BITAND, HALT, SEGM, SEGU,
@@ -89,25 +89,24 @@ extern void um_free(UM_T *um)
 
 extern wordData decode_instruction(UM_T um) 
 {
-	wordData data = malloc(sizeof(*data));
-	assert(data != NULL);
+	wordData data;
 	uint32_t word = get_word(um->memory, 0, um->prog_counter);
 	/* initialize-different operations may not use all variables of data */
-	data->opcode = Bitpack_getu(word, 4, 28);
+	data.opcode = Bitpack_getu(word, 4, 28);
 	
-	data->val = 0;
-	data->rega = 0;
-	data->regb = 0;
-	data->regc = 0;
+	data.val = 0;
+	data.rega = 0;
+	data.regb = 0;
+	data.regc = 0;
 	
-	if (data->opcode == VALLD) {
-		data->rega = Bitpack_getu(word, 3, 25);
-		data->val = Bitpack_gets(word, 25, 0);
+	if (data.opcode == VALLD) {
+		data.rega = Bitpack_getu(word, 3, 25);
+		data.val = Bitpack_gets(word, 25, 0);
 	}
 	else {
-		data->regc = Bitpack_getu(word, 3, 0);
-		data->regb = Bitpack_getu(word, 3, 3);
-		data->rega = Bitpack_getu(word, 3, 6);
+		data.regc = Bitpack_getu(word, 3, 0);
+		data.regb = Bitpack_getu(word, 3, 3);
+		data.rega = Bitpack_getu(word, 3, 6);
 	}
 
 	return data;
@@ -115,33 +114,33 @@ extern wordData decode_instruction(UM_T um)
 
 extern int call_op(UM_T um, wordData curr_word)
 {
-	if (curr_word->opcode == CMOV)
+	if (curr_word.opcode == CMOV)
 		cond_mov(um, curr_word);
-	else if (curr_word->opcode == SEGLD)
+	else if (curr_word.opcode == SEGLD)
 		seg_load(um, curr_word);
-	else if (curr_word->opcode == SEGS)
+	else if (curr_word.opcode == SEGS)
 		seg_store(um, curr_word);
-	else if (curr_word->opcode == ADD)
+	else if (curr_word.opcode == ADD)
 		add(um, curr_word);
-	else if (curr_word->opcode == MULT)
+	else if (curr_word.opcode == MULT)
 		multiply(um, curr_word);
-	else if (curr_word->opcode == DIV)
+	else if (curr_word.opcode == DIV)
 		divide(um, curr_word);
-	else if (curr_word->opcode == BITAND)
+	else if (curr_word.opcode == BITAND)
 		bit_and(um, curr_word);
-	else if (curr_word->opcode == HALT)
+	else if (curr_word.opcode == HALT)
 		return halt(); /* return 1 */
-	else if (curr_word->opcode == SEGM)
+	else if (curr_word.opcode == SEGM)
 		seg_map(um, curr_word);
-	else if (curr_word->opcode == SEGU)
+	else if (curr_word.opcode == SEGU)
 		seg_unmap(um, curr_word);
-	else if (curr_word->opcode == COUT)
+	else if (curr_word.opcode == COUT)
 		output(um, curr_word);
-	else if (curr_word->opcode == CIN)
+	else if (curr_word.opcode == CIN)
 		input(um, curr_word);
-	else if (curr_word->opcode == PROGLD)
+	else if (curr_word.opcode == PROGLD)
 		load_prog(um, curr_word);
-	else if (curr_word->opcode == VALLD)
+	else if (curr_word.opcode == VALLD)
 		load_val(um, curr_word);
 	else 
 		return 1;
@@ -153,7 +152,6 @@ extern int execute_intruction(UM_T um)
 	int is_halt = 0;
 	wordData curr_word = decode_instruction(um);
 	is_halt = call_op(um, curr_word);
-	free(curr_word);
 	return is_halt; 
 }
 
@@ -163,46 +161,46 @@ extern int execute_intruction(UM_T um)
 
 extern void cond_mov(UM_T um, wordData curr_word)  
 {
-	if (um->regs[curr_word->regc] != 0)
-		um->regs[curr_word->rega] = um->regs[curr_word->regb];
+	if (um->regs[curr_word.regc] != 0)
+		um->regs[curr_word.rega] = um->regs[curr_word.regb];
 	return;
 }
 
 extern void seg_load(UM_T um, wordData curr_word)
 {
-	um->regs[curr_word->rega] = get_word(um->memory,
-		um->regs[curr_word->regb], um->regs[curr_word->regc]);
+	um->regs[curr_word.rega] = get_word(um->memory,
+		um->regs[curr_word.regb], um->regs[curr_word.regc]);
 	return;
 }
 extern void seg_store(UM_T um, wordData curr_word)
 {
-	write_word(um->memory, um->regs[curr_word->rega],
-		um->regs[curr_word->regb], um->regs[curr_word->regc]);
+	write_word(um->memory, um->regs[curr_word.rega],
+		um->regs[curr_word.regb], um->regs[curr_word.regc]);
 	return;
 }
 extern void add(UM_T um, wordData curr_word)  
 {
-	um->regs[curr_word->rega] = um->regs[curr_word->regb] +
-			um->regs[curr_word->regc];
+	um->regs[curr_word.rega] = um->regs[curr_word.regb] +
+			um->regs[curr_word.regc];
 	return;
 }
 extern void multiply(UM_T um, wordData curr_word)  
 {
-	um->regs[curr_word->rega] = um->regs[curr_word->regb] *
-			um->regs[curr_word->regc];
+	um->regs[curr_word.rega] = um->regs[curr_word.regb] *
+			um->regs[curr_word.regc];
 	return;
 }
 extern void divide(UM_T um, wordData curr_word)  
 {
-	um->regs[curr_word->rega] = um->regs[curr_word->regb] /
-			um->regs[curr_word->regc];
+	um->regs[curr_word.rega] = um->regs[curr_word.regb] /
+			um->regs[curr_word.regc];
 	return;
 }
 extern void bit_and(UM_T um, wordData curr_word)  
 {
 
-	um->regs[curr_word->rega] = ~(um->regs[curr_word->regb] &
-		um->regs[curr_word->regc]);
+	um->regs[curr_word.rega] = ~(um->regs[curr_word.regb] &
+		um->regs[curr_word.regc]);
 	return;
 }
 extern int halt() 
@@ -211,18 +209,18 @@ extern int halt()
 }
 extern void seg_map(UM_T um, wordData curr_word)  
 {
-	um->regs[curr_word->regb] = 
-			new_segment(um->memory, um->regs[curr_word->regc]);
+	um->regs[curr_word.regb] = 
+			new_segment(um->memory, um->regs[curr_word.regc]);
 	return;
 }
 extern void seg_unmap(UM_T um, wordData curr_word)  
 {
-	unmap_segment(um->memory, um->regs[curr_word->regc]);
+	unmap_segment(um->memory, um->regs[curr_word.regc]);
 	return;
 }
 extern void output(UM_T um, wordData curr_word)  
 {
-	uint32_t c = um->regs[curr_word->regc];
+	uint32_t c = um->regs[curr_word.regc];
 	assert(c <= 255);
 
 	putchar(c);
@@ -232,28 +230,28 @@ extern void input(UM_T um, wordData curr_word)
 {
 	char c = getchar();
 	if (c == EOF) /* if end of input, load regc with all 1's */
-		um->regs[curr_word->regc] = ~(uint32_t)0;
+		um->regs[curr_word.regc] = ~(uint32_t)0;
 	else 
-		um->regs[curr_word->regc] = c;
+		um->regs[curr_word.regc] = c;
 	return;
 }
 extern void load_prog(UM_T um, wordData curr_word)  
 {
 
-	um->prog_counter = um->regs[curr_word->regc] - 1;
+	um->prog_counter = um->regs[curr_word.regc] - 1;
 
-	if (um->regs[curr_word->regb] == 0)
+	if (um->regs[curr_word.regb] == 0)
 		return;
 	else {
 		uint32_t program_size, i, seg0_id;
-		program_size = seg_size(um->memory, um->regs[curr_word->regb]);
+		program_size = seg_size(um->memory, um->regs[curr_word.regb]);
 		unmap_segment(um->memory, 0);
 		seg0_id = new_segment(um->memory, program_size); /* will be zero
 		as unmapped ids get mapped in LIFO order */
 
 		for (i = 0; i < program_size; i++) {
 			write_word(um->memory, seg0_id, i, 
-				get_word(um->memory, um->regs[curr_word->regb],
+				get_word(um->memory, um->regs[curr_word.regb],
 									    i));
 		}
 	}
@@ -261,7 +259,7 @@ extern void load_prog(UM_T um, wordData curr_word)
 }
 extern void load_val(UM_T um, wordData curr_word)  
 {
-	um->regs[curr_word->rega] = curr_word->val;
+	um->regs[curr_word.rega] = curr_word.val;
 	return;
 }
 
