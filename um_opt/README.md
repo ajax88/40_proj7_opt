@@ -3,6 +3,10 @@
 ##           Claudia Mihm: cmihm01
 ##           11/24/15
 
+### Purpose
+This program emulates an performance optimized RISC-style and turing-complete universal machine that uses 8 registers and 14 basic instructions. 
+
+
 *************************** PROGRAM ARCHITECTURE *******************************
 
 
