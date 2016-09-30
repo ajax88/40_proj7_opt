@@ -1,32 +1,7 @@
-README
-Created by Alex Jackson: ajacks06
-           Claudia Mihm: cmihm01
-           11/24/15
-Hours spent on project:
-        - Analyzing assignment: 4 hours
-        - Preparing design: 6 hours 
-        - Solving problem: 20 hours 
-        - Total: 30 hours 
-
-****************************** IMPORTANT NOTE **********************************
-At the beginning of this project, Claudia got a concussion. Noah relaxed the 
-partnering rules, and allowed Claudia to be as uninvolved as was necessary for 
-her to recover. For the design document, Claudia helped Alex talk through the 
-memory segment design, and read over the entire document after Alex wrote it, 
-helping when needed. For the actual project, Alex wrote all of the code, except
-for the unit tests, which Claudia wrote a number of. 
-
-****************************** HELP RECEIVED ***********************************
-Asked for the help of one TA when trying to debug the um.
-
-************************* WHAT HAS BEEN IMPLEMENTED ****************************
-The um has been correctly implemented in its entirety. This only thing that is 
-lackluster is the speed of the um, which is probably a little over a factor of 
-10 slower than a more well-tuned um.
-
-****************************** DESIGN DIFFERENCES ******************************
-The only change in our um from the design was that the individual segments used 
-for the memory were created from Hanson UArray_Ts, not as regular c arrays. 
+# README
+## Created by Alex Jackson: ajacks06
+##           Claudia Mihm: cmihm01
+##           11/24/15
 
 *************************** PROGRAM ARCHITECTURE *******************************
 
